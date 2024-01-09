@@ -13,17 +13,21 @@ userRouter.get('/register', async (req,res)=>{
     }
 })
 
-userRouter.post('/register',
-  passport.authenticate('register', {
-    successRedirect: '/users/profile',
-    failureRedirect: '/users/register',
-  })
-)
+//userRouter.post('/register',
+//  passport.authenticate('register', {
+//    successRedirect: '/users/profile',
+//    failureRedirect: '/users/register',
+//  })
+//)
 
-userRouter.get('/profile', apiUserLogged, async (req, res) =>{
+userRouter.get('/profile', 
+passport.authenticate('jwt',{
+    failureRedirect: '/sessions/login',
+    session:false
+  }),
+  apiUserLogged, 
+  async (req, res) =>{
     try {
-        //const user = await dbUser.findOne({email:req.user.email}).lean()
-        //delete user.password
         return res.render('profile')
     } catch (error) {
         res.status(500).json({status: "Error", error: error.message})
