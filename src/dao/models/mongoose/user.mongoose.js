@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 import { randomUUID } from "node:crypto"
-import { createHash, isValidPassword } from '../../utils/encryptor.js'
+import { createHash, isValidPassword } from '../../../utils/encryptor.js'
 
 const userSchema = new mongoose.Schema({
   _id: { type: String, default: randomUUID },
@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   age: { type: Number, required: true },
+  cartId: { type: Number, default: null},
+  role: { type: String, default: "user"},
 }, {
   strict: 'throw',
   versionKey: false,
@@ -45,12 +47,6 @@ const userSchema = new mongoose.Schema({
   
       if(!isValid){
         throw new Error ('Credenciales incorrectas')
-      }
-      
-      if (email === 'adminCoder@coder.com' && password ==='adminCod3r123' ){
-          user.rol = 'admin'
-      }else{
-          user.rol = 'user'
       }
       
       delete user.password

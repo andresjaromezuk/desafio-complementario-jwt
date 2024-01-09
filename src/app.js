@@ -4,16 +4,15 @@ import {apiRouter} from './router/api/apiRouter.js'
 import {webRouter} from './router/web/webRouter.js'
 import {engine} from 'express-handlebars'
 import { sessions } from './middleware/sessions.js'
-import { authenticate } from './middleware/passport.js'
+import { authenticate } from './middleware/authentication.js'
+import { cookies } from './middleware/cookies.js'
+import { connectDB } from './database/mongodb.js'
 import path from 'path'
 import __dirname from './util.js'
-import mongoose from 'mongoose'
 
 
 //MongoDB
-import {MONGODB_CNX_STR} from './config/mongodb.config.js'
-const db = await mongoose.connect(MONGODB_CNX_STR)
-console.log("Se conectó correctamente a la DB")
+await connectDB()
 
 //Express
 import {PORT} from './config/server.config.js'
@@ -28,6 +27,7 @@ app.use(json())
 app.use(methodOverride('_method'))
 
 app.use(sessions)
+app.use(cookies)
 
 app.engine('handlebars', engine())
 app.set('views', path.join(__dirname, 'views'))

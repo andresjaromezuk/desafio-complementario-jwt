@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { dbUser } from '../../dao/models/user.mongoose.js'
+import { dbUser } from '../../dao/models/mongoose/user.mongoose.js'
 import passport from 'passport'
 
 export const sessionRouter = Router()
@@ -14,12 +14,12 @@ sessionRouter.get('/login', async (req,res)=>{
     
 })
 
-sessionRouter.post('/login',
-passport.authenticate('login', {
-  successRedirect: '/users/profile',
-  failureRedirect: '/sessions/login',
-})
-)
+//sessionRouter.post('/login',
+//passport.authenticate('login', {
+//  successRedirect: '/users/profile',
+//  failureRedirect: '/sessions/login',
+//})
+//)
 
 sessionRouter.get('/githublogin',
   passport.authenticate('github', { scope: ['user:email'] })
@@ -32,13 +32,13 @@ sessionRouter.get('/githubcallback',
   })
 )
 
-sessionRouter.delete('/logout', async (req, res) =>{
-    req.logout(error => {
-        if (error) {
-          console.log(error)
-        }
-        res.redirect('/sessions/login')
-      })
-})
+//sessionRouter.delete('/logout', async (req, res) =>{
+//    req.logout(error => {
+//        if (error) {
+//          console.log(error)
+//        }
+//        res.redirect('/sessions/login')
+//      })
+//})
 
 

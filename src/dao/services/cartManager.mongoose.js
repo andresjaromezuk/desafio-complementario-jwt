@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import {dbCart} from '../models/cart.mongoose.js'
+import {dbCart} from '../models/mongoose/cart.mongoose.js'
 import { randomUUID } from 'crypto'
 import { brotliDecompressSync } from 'zlib'
 

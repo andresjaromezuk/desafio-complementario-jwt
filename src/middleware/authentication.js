@@ -1,8 +1,13 @@
 import passport from 'passport'
 import {Strategy as LocalStrategy} from 'passport-local'
 import {Strategy as GithubStrategy} from 'passport-github2'
-import {dbUser} from '../dao/models/user.mongoose.js'
+import { ExtractJwt, Strategy as JwtStrategy} from 'passport-jwt'
+import {dbUser} from '../dao/models/mongoose/user.mongoose.js'
 import {githubClientId, githubClientSecret, githubCallbackUrl} from '../config/github.config.js'
+import {JWT_PRIVATE_KEY} from '../config/auth.config.js'
+import {encrypt} from "../utils/encryptor.js"
+
+const COOKIE_OPTS = { signed: true, maxAge: 1000 * 60 * 60, httpOnly: true }
 
 passport.use('login', new LocalStrategy({
   usernameField: 'email'
@@ -11,7 +16,7 @@ passport.use('login', new LocalStrategy({
     const user = await dbUser.login(email, password)
     done(null, user)
   } catch (error) {
-    return done(null, false, error.message)
+    done(error)
   }
 }))
 
@@ -23,8 +28,25 @@ passport.use('register', new LocalStrategy({
     const user = await dbUser.register(req.body)
     done(null, user)
   } catch (error){
-    done(null, false, error.message)
+    done(error)
   }
+}))
+
+passport.use('jwt', new JwtStrategy({
+  jwtFromRequest: ExtractJwt.fromExtractors([function (req) {
+    let token = null
+    if (req?.signedCookies) {
+      token = req.signedCookies['authorization']
+    }
+    
+    if(!token){
+      throw new Error('Debes iniciar sesión')
+    }
+    return token
+  }]),
+  secretOrKey: JWT_PRIVATE_KEY
+}, (user, done) => {
+  done(null, user)
 }))
 
 passport.use('github', new GithubStrategy({
@@ -59,6 +81,22 @@ passport.use('github', new GithubStrategy({
   }
 
 }))
+
+export async function appendJwtAsCookie(req, res, next){
+  try {
+    const jwt = await encrypt(req.user)
+    res.cookie('authorization', jwt, COOKIE_OPTS)
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function removeJwtFromCookies(req, res, next) {
+  const response = res.clearCookie('authorization', COOKIE_OPTS)
+  next()
+}
+
 
 passport.serializeUser((user, next) => { next(null, user) })
 passport.deserializeUser((user, next) => { next(null, user) })

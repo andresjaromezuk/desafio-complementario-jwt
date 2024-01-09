@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { dbUser } from '../../dao/models/user.mongoose.js'
-import { webUserLogged } from '../../middleware/auth.js'
+import { dbUser } from '../../dao/models/mongoose/user.mongoose.js'
+import { apiUserLogged, webUserLogged } from '../../middleware/authorization.js'
 import passport from 'passport'
 
 export const userRouter = Router()
@@ -20,11 +20,11 @@ userRouter.post('/register',
   })
 )
 
-userRouter.get('/profile', webUserLogged, async (req, res) =>{
+userRouter.get('/profile', apiUserLogged, async (req, res) =>{
     try {
         //const user = await dbUser.findOne({email:req.user.email}).lean()
         //delete user.password
-        return res.render('profile', {user: req.user})
+        return res.render('profile')
     } catch (error) {
         res.status(500).json({status: "Error", error: error.message})
     }

@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import {dbProduct} from '../models/product.mongoose.js'
+import {dbProduct} from '../models/mongoose/product.mongoose.js'
 import __dirname from '../../util.js'
 import path from 'path'
 import { randomUUID } from 'crypto'
