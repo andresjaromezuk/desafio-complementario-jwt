@@ -1,4 +1,4 @@
-export function webUserLogged(req, res, next){
+export function webUserLogged(error, req, res, next){
     if (!req.isAuthenticated()){
         return res.redirect('/sessions/login')
     }

@@ -22,16 +22,12 @@ userRouter.get('/register', async (req,res)=>{
 
 userRouter.get('/profile', 
 passport.authenticate('jwt',{
-    failureRedirect: '/sessions/login',
+    failWithError: true,
     session:false
   }),
-  apiUserLogged, 
-  async (req, res) =>{
-    try {
-        return res.render('profile')
-    } catch (error) {
-        res.status(500).json({status: "Error", error: error.message})
-    }
+  webUserLogged, 
+ (req, res) =>{
+    return res.render('profile')
 })
 
 userRouter.get('/resetPassword', async (req, res) =>{

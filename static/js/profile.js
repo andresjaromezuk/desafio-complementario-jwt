@@ -7,6 +7,10 @@ const button = document.querySelector('button')
 window.addEventListener('load', async () => {
     const response_json = await fetch('/api/users/profile')
     console.log(response_json)
+    if (response_json.status !== 200) {
+        alert('Debes iniciar sesión')
+        return (window.location.href = '/sessions/login')
+    }
    
     const response = await response_json.json()
 
